@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jivesh Narula — Bleach Inspired Portfolio</title>
+  
+  <!-- Tailwind CSS & FontAwesome -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts: Syne & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #050505;
+      color: #FFFFFF;
+      overflow-x: hidden;
+    }
+
+    .font-display {
+      font-family: 'Syne', sans-serif;
+    }
+
+    /* Vertical Reiatsu (Spiritual Pressure) Animation */
+    #reiatsu-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Floating Anime Art Motion */
+    @keyframes floatingManga {
+      0%, 100% {
+        transform: translateY(0px) scale(1);
+      }
+      50% {
+        transform: translateY(-12px) scale(1.02);
+      }
+    }
+
+    .aizen-float {
+      animation: floatingManga 5s ease-in-out infinite;
+    }
+
+    /* Clean Slash Hover Effects for Portfolio Cards */
+    .slash-card {
+      position: relative;
+      background: #0D0D0D;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .slash-card:hover {
+      border-color: #FFFFFF;
+      transform: translateY(-4px);
+      box-shadow: 0 10px 30px -10px rgba(255, 255, 255, 0.2);
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #050505;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #333333;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #FFFFFF;
+    }
+  </style>
+
+  <script>
+    // Global Navigation & Audio Control Functions
+    function scrollToPortfolio() {
+      const portfolioSection = document.getElementById('portfolio-content');
+      if (portfolioSection) {
+        portfolioSection.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+      }
+      
+      // Pause Audio when scrolling down to portfolio content
+      pauseAudioSafely();
+    }
+
+    function pauseAudioSafely() {
+      const audio = document.getElementById('bleach-audio');
+      if (audio && !audio.paused) {
+        try {
+          audio.pause();
+          const noticeText = document.getElementById('audio-notice-text');
+          if (noticeText) noticeText.innerText = "Sound: Muted";
+        } catch(e) {
+          console.log("Audio pause handled safely:", e);
+        }
+      }
+    }
+
+    function toggleAudio() {
+      const audio = document.getElementById('bleach-audio');
+      const noticeText = document.getElementById('audio-notice-text');
+      if (audio) {
+        if (audio.paused) {
+          audio.play().then(() => {
+            if (noticeText) noticeText.innerText = "Sound: Playing";
+          }).catch(err => {
+            console.log("Autoplay blocked by browser policy:", err);
+          });
+        } else {
+          audio.pause();
+          if (noticeText) noticeText.innerText = "Sound: Muted";
+        }
+      }
+    }
+  </script>
+</head>
+<body class="relative selection:bg-white selection:text-black">
+
+  <!-- BACKGROUND AUDIO SOURCE -->
+  <!-- Looks for assets/theme.mp3 or theme.mp3 in root -->
+  <audio id="bleach-audio" loop preload="auto">
+    <source src="./assets/theme.mp3" type="audio/mpeg">
+    <source src="./theme.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- SOUND TOGGLE BUTTON (TOP RIGHT) -->
+  <button onclick="toggleAudio()" class="fixed top-6 right-6 z-50 px-4 py-2 bg-black/80 backdrop-blur-md border border-white/30 text-white font-mono text-xs uppercase tracking-widest hover:border-white transition-all flex items-center gap-2 cursor-pointer">
+    <i class="fa-solid fa-volume-high text-xs"></i>
+    <span id="audio-notice-text">Sound: Auto-Enabled</span>
+  </button>
+
+  <!-- INTRO SCREEN (AIZEN MANGA ANIMATION & MUSIC LANDING) -->
+  <section id="intro" class="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden bg-black border-b border-white/20">
+    
+    <!-- Vertical Spiritual Pressure Canvas -->
+    <canvas id="reiatsu-canvas"></canvas>
+
+    <!-- Japanese Watermark Kanji -->
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none opacity-5">
+      <span class="font-display font-black text-[35vw] text-white leading-none">藍染</span>
+    </div>
+
+    <!-- Central Aizen Manga Artwork -->
+    <div class="relative z-10 max-w-md w-full flex flex-col items-center px-4">
+      <div class="aizen-float relative mb-8 w-64 sm:w-80 max-h-[60vh] flex items-center justify-center">
+        <img src="./assets/aizen.png" alt="Aizen Sosuke" class="w-full h-auto object-contain max-h-[60vh] drop-shadow-[0_0_35px_rgba(255,255,255,0.25)]" onerror="this.onerror=null; this.src='./aizen.png';">
+      </div>
+
+      <!-- Scroll to Skip Button -->
+      <button onclick="scrollToPortfolio()" class="group z-20 px-8 py-3.5 bg-white text-black font-display font-black text-xs sm:text-sm uppercase tracking-widest border-2 border-white hover:bg-black hover:text-white transition-all flex items-center gap-3 cursor-pointer">
+        <span>Skip to Portfolio</span>
+        <i class="fa-solid fa-arrow-down group-hover:translate-y-1 transition-transform"></i>
+      </button>
+    </div>
+
+  </section>
+
+  <!-- MAIN PORTFOLIO CONTENT (SCROLL REVEAL) -->
+  <div id="portfolio-content" class="relative z-20 bg-[#050505]">
+    
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-40 bg-[#050505]/90 backdrop-blur-md border-b border-white/10">
+      <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+        <a href="#" class="font-display font-black text-xl tracking-tighter uppercase flex items-center gap-2">
+          <span>JN</span>
+          <span class="text-[10px] font-mono px-2 py-0.5 border border-white/30 text-gray-400">NSUT ICE</span>
+        </a>
+        <nav class="hidden md:flex gap-8 font-mono text-xs uppercase tracking-widest text-gray-400">
+          <a href="#about" class="hover:text-white transition-colors">About</a>
+          <a href="#skills" class="hover:text-white transition-colors">Skills</a>
+          <a href="#projects" class="hover:text-white transition-colors">Projects</a>
+          <a href="#achievements" class="hover:text-white transition-colors">Achievements</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6">
+      
+      <!-- HERO / ABOUT SECTION -->
+      <section id="about" class="py-24 border-b border-white/10 flex flex-col md:flex-row items-center gap-12">
+        <div class="w-40 h-40 md:w-56 md:h-56 rounded-full overflow-hidden border-2 border-white/30 shrink-0">
+          <img src="https://github.com/jivesh11-jsr.png" alt="Jivesh Narula" class="w-full h-full object-cover">
+        </div>
+        <div class="flex-1">
+          <div class="inline-block px-3 py-1 mb-4 border border-white/20 text-xs font-mono tracking-widest uppercase text-gray-400">
+            NSUT Delhi • ICE (2026-2030)
+          </div>
+          <h1 class="font-display text-5xl md:text-7xl font-black uppercase tracking-tight mb-4">
+            Jivesh Narula
+          </h1>
+          <p class="text-gray-300 text-base md:text-lg leading-relaxed mb-8 max-w-2xl">
+            1st year B.Tech student in Instrumentation & Control Engineering at NSUT. Passionate coder, AI/ML explorer, and developer actively building practical tools and logic problems.
+          </p>
+          
+          <div class="flex flex-wrap gap-4 items-center">
+            <a href="https://docs.google.com/document/d/1Zx9xnd8_yepSnvVGliSPVAC8BGRmylDb/edit?usp=sharing" target="_blank" class="px-6 py-3 bg-white text-black font-display font-bold text-xs uppercase tracking-widest border border-white hover:bg-black hover:text-white transition-all flex items-center gap-2">
+              <i class="fa-solid fa-file-pdf"></i>
+              <span>Download Resume</span>
+            </a>
+            <a href="https://github.com/jivesh11-jsr" target="_blank" class="p-3 border border-white/20 hover:border-white transition-all text-white">
+              <i class="fa-brands fa-github text-lg"></i>
+            </a>
+            <a href="https://www.linkedin.com/in/jivesh-narula-28b91941a/" target="_blank" class="p-3 border border-white/20 hover:border-white transition-all text-white">
+              <i class="fa-brands fa-linkedin-in text-lg"></i>
+            </a>
+            <a href="https://www.instagram.com/jivesh_narula/?hl=en" target="_blank" class="p-3 border border-white/20 hover:border-white transition-all text-white">
+              <i class="fa-brands fa-instagram text-lg"></i>
+            </a>
+            <a href="mailto:narulajivesh2008@gmail.com" class="p-3 border border-white/20 hover:border-white transition-all text-white">
+              <i class="fa-regular fa-envelope text-lg"></i>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- SKILLS SECTION -->
+      <section id="skills" class="py-20 border-b border-white/10">
+        <h2 class="font-display text-3xl font-black uppercase tracking-tight mb-8">01. Skills & Technologies</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="slash-card p-4 text-center font-mono text-sm font-semibold">Python (Intermediate)</div>
+          <div class="slash-card p-4 text-center font-mono text-sm font-semibold">Java (Basic)</div>
+          <div class="slash-card p-4 text-center font-mono text-sm font-semibold">SQL & DBMS</div>
+          <div class="slash-card p-4 text-center font-mono text-sm font-semibold">Machine Learning</div>
+          <div class="slash-card p-4 text-center font-mono text-sm font-semibold">HTML / CSS / JS</div>
+          <div class="slash-card p-4 text-center font-mono text-sm font-semibold">Circuit Analysis</div>
+          <div class="slash-card p-4 text-center font-mono text-sm font-semibold">Sensors & Measurement</div>
+          <div class="slash-card p-4 text-center font-mono text-sm font-semibold">Advanced MS Excel</div>
+        </div>
+      </section>
+
+      <!-- PROJECTS SECTION -->
+      <section id="projects" class="py-20 border-b border-white/10">
+        <h2 class="font-display text-3xl font-black uppercase tracking-tight mb-8">02. Featured Projects</h2>
+        <div class="grid md:grid-cols-2 gap-8">
+          
+          <!-- AttendXICE -->
+          <div class="slash-card p-8 flex flex-col justify-between">
+            <div>
+              <div class="text-xs font-mono text-gray-500 uppercase tracking-widest mb-2">Web Application • HTML/JS</div>
+              <h3 class="font-display text-2xl font-bold mb-3">AttendXICE</h3>
+              <p class="text-sm text-gray-400 leading-relaxed mb-6">
+                Fast, offline-first attendance tracking system designed for classes. Features roll call filters, student search, session history, and CSV reporting.
+              </p>
+            </div>
+            <a href="https://github.com/jivesh11-jsr/AttendXICE" target="_blank" class="font-mono text-xs font-bold uppercase underline hover:text-gray-300">
+              View Repository <i class="fa-solid fa-arrow-up-right-from-square ml-1"></i>
+            </a>
+          </div>
+
+          <!-- Python Practice Programs -->
+          <div class="slash-card p-8 flex flex-col justify-between">
+            <div>
+              <div class="text-xs font-mono text-gray-500 uppercase tracking-widest mb-2">Education • Python</div>
+              <h3 class="font-display text-2xl font-bold mb-3">Python-Practice-Programs</h3>
+              <p class="text-sm text-gray-400 leading-relaxed mb-6">
+                20 Python practice problems with complete solutions covering file handling, stacks, binary files, and CSV manipulation.
+              </p>
+            </div>
+            <a href="https://github.com/jivesh11-jsr/Python-Practice-Programs" target="_blank" class="font-mono text-xs font-bold uppercase underline hover:text-gray-300">
+              View Repository <i class="fa-solid fa-arrow-up-right-from-square ml-1"></i>
+            </a>
+          </div>
+
+          <!-- Contact Manager -->
+          <div class="slash-card p-8 flex flex-col justify-between">
+            <div>
+              <div class="text-xs font-mono text-gray-500 uppercase tracking-widest mb-2">CLI Utility • Python</div>
+              <h3 class="font-display text-2xl font-bold mb-3">Contact-Manager-py</h3>
+              <p class="text-sm text-gray-400 leading-relaxed mb-6">
+                Contact management project using pickle for binary data persistence, colorama for styling, and PrettyTable for tabular display.
+              </p>
+            </div>
+            <a href="https://github.com/jivesh11-jsr/Contact-Manager-py" target="_blank" class="font-mono text-xs font-bold uppercase underline hover:text-gray-300">
+              View Repository <i class="fa-solid fa-arrow-up-right-from-square ml-1"></i>
+            </a>
+          </div>
+
+          <!-- Bike Sharing ML -->
+          <div class="slash-card p-8 flex flex-col justify-between">
+            <div>
+              <div class="text-xs font-mono text-gray-500 uppercase tracking-widest mb-2">Data Science • Jupyter Notebook</div>
+              <h3 class="font-display text-2xl font-bold mb-3">Bike-Sharing-ML-Prediction</h3>
+              <p class="text-sm text-gray-400 leading-relaxed mb-6">
+                Exploratory data analysis and predictive machine learning modeling for bike rental demand estimation.
+              </p>
+            </div>
+            <a href="https://github.com/jivesh11-jsr/Bike-Sharing-ML-Prediction" target="_blank" class="font-mono text-xs font-bold uppercase underline hover:text-gray-300">
+              View Repository <i class="fa-solid fa-arrow-up-right-from-square ml-1"></i>
+            </a>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ACHIEVEMENTS SECTION -->
+      <section id="achievements" class="py-20 border-b border-white/10">
+        <h2 class="font-display text-3xl font-black uppercase tracking-tight mb-8">03. Certifications & Honors</h2>
+        <div class="space-y-4 font-mono text-sm">
+          <div class="slash-card p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center">
+            <div>
+              <div class="font-bold text-white">Data Science and AI (8-Week Certification)</div>
+              <div class="text-xs text-gray-400">CODE, IIT Madras</div>
+            </div>
+            <div class="text-xs border border-white/20 px-3 py-1 mt-2 sm:mt-0 text-gray-400">Oct 2024</div>
+          </div>
+          <div class="slash-card p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center">
+            <div>
+              <div class="font-bold text-white">Domestic Data Entry Operator (Grade A+)</div>
+              <div class="text-xs text-gray-400">Skill India / NSDC • Cert ID: CERT_2238797</div>
+            </div>
+            <div class="text-xs border border-white/20 px-3 py-1 mt-2 sm:mt-0 text-gray-400">Dec 2024</div>
+          </div>
+          <div class="slash-card p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center">
+            <div>
+              <div class="font-bold text-white">1st Position, Zonal Slogan Writing (English)</div>
+              <div class="text-xs text-gray-400">Directorate of Education, Govt. of NCT of Delhi (Zone-XIII)</div>
+            </div>
+            <div class="text-xs border border-white/20 px-3 py-1 mt-2 sm:mt-0 text-gray-400">Aug 2024</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="py-12 flex flex-col sm:flex-row justify-between items-center text-xs font-mono text-gray-500">
+        <div>© Jivesh Narula — NSUT Delhi</div>
+        <div class="mt-2 sm:mt-0">narulajivesh2008@gmail.com</div>
+      </footer>
+
+    </main>
+  </div>
+
+  <!-- REIATSU CANVAS ENGINE & AUTOMATED LISTENERS -->
+  <script>
+    // Canvas Vertical Spiritual Pressure Lines
+    const canvas = document.getElementById('reiatsu-canvas');
+    const ctx = canvas.getContext('2d');
+    let lines = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class ReiatsuLine {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = canvas.height + Math.random() * 200;
+        this.length = Math.random() * 80 + 40;
+        this.speed = Math.random() * 8 + 4;
+        this.opacity = Math.random() * 0.5 + 0.1;
+        this.width = Math.random() * 1.5 + 0.5;
+      }
+      update() {
+        this.y -= this.speed;
+        if (this.y + this.length < 0) {
+          this.reset();
+        }
+      }
+      draw() {
+        ctx.strokeStyle = `rgba(255, 255, 255, ${this.opacity})`;
+        ctx.lineWidth = this.width;
+        ctx.beginPath();
+        ctx.moveTo(this.x, this.y);
+        ctx.lineTo(this.x, this.y - this.length);
+        ctx.stroke();
+      }
+    }
+
+    for (let i = 0; i < 70; i++) {
+      lines.push(new ReiatsuLine());
+    }
+
+    function animateReiatsu() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      lines.forEach(line => {
+        line.update();
+        line.draw();
+      });
+      requestAnimationFrame(animateReiatsu);
+    }
+    animateReiatsu();
+
+    // Scroll Listener: Pause audio on scroll
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 150) {
+        pauseAudioSafely();
+      }
+    });
+
+    // Auto Play Attempt on First Load / Click Interaction
+    window.addEventListener('load', () => {
+      const audio = document.getElementById('bleach-audio');
+      if (audio) {
+        audio.play().catch(() => {
+          // Fallback if browser blocks unprompted autoplay
+          document.body.addEventListener('click', function startOnFirstClick() {
+            audio.play();
+            document.body.removeEventListener('click', startOnFirstClick);
+          }, { once: true });
+        });
+      }
+    });
+  </script>
+</body>
+</html>
